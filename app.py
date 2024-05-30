@@ -5,11 +5,11 @@ import mariadb
 # function to connect to the database
 def connect_db(user_type):
     if user_type == "admin":
-        user = "admin_user"
-        password = "admin_password"
+        user = "foodie"
+        password = "chefP!"
     elif user_type == "casual":
-        user = "casual_user"
-        password = "casual_password"
+        user = "pares"
+        password = "diwataP"
     else:
         raise ValueError("Invalid user type")
 
