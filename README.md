@@ -1,6 +1,20 @@
 # Information System
-A food item, establishment, and review database management system.
+A food item, establishment, and review database management system using MariaDB and Python.
 ## Running the application locally
+Firstly, deploy or run the MariaDB server in your terminal in the same directory as the repo. Make sure that MariaDB is installed on your local machine.
+
+    $ mysql -u root -p
+    Enter password: <password here>
+    MariaDB [(none)]> source food.sql
+    MariaDB [(none)]> exit
+    
+After setting up, run **app.py**
+
+    python app.py
+
+Or alternatively,
+
+    python3 app.py
 
 ## Developer guidelines
 Always take note of the following notes.
