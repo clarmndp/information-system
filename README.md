@@ -8,7 +8,12 @@ Firstly, deploy or setup the MariaDB server in your terminal using the same dire
     MariaDB [(none)]> source food.sql
     MariaDB [(none)]> exit
 
-After setting up the food DB, run **app.py**
+
+Next, install the necessary Python package needed to run the application.
+
+    pip install mariadb
+
+After setting up the food DB and installing the necessary package, run **app.py**
 
     python app.py
 
