@@ -36,10 +36,10 @@ def connect_db(user_type):
 def loginConn(username, password): 
     if username == 'foodie' and password == 'chefP!':
         connect_db("Admin")
-        return 'AdminPage'
+        return AdminPage
     elif username == 'pares' and password == 'diwataP':
         connect_db("Casual")
-        return 'CasualPage'
+        return CasualPage
     else:
         messagebox.showerror("Login Error", "Invalid username or password")
         return None
@@ -60,7 +60,7 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage):
+        for F in (LoginPage, AdminPage, CasualPage):
   
             frame = F(mainContainer, self)
   
@@ -69,7 +69,7 @@ class tkinterApp(tk.Tk):
   
             frame.grid(row = 0, column = 0, sticky ="nsew")
   
-        self.show_frame(LoginPage, AdminPage, CasualPage)
+        self.show_frame(LoginPage)
   
     #display the current frame passed as parameter
     def show_frame(self, cont):
@@ -105,9 +105,9 @@ class LoginPage(tk.Frame):
         def directClientToPage():
             name = self.name_var.get()
             password = self.passw_var.get()
-            page = loginConn(name, password)
-            if page:
-                controller.show_frame(globals()[page])
+            userType = loginConn(name, password)
+            if userType:
+                controller.show_frame(userType)
 
         submitBtn = tk.Button(self, text='Submit', command=directClientToPage)
         submitBtn.grid(row=3, column=1, pady=10)
@@ -115,7 +115,7 @@ class LoginPage(tk.Frame):
 class AdminPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-
+ 
         #add your features here
   
 class CasualPage(tk.Frame):  
