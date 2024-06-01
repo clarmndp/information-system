@@ -76,25 +76,6 @@ class tkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-#function for adding the food establishment to the mariadb
-def addEstablishment ():
-    id = estabId.get()
-    loc = estabLoc.get()
-    rate = estabRating.get()
-    name = estabName.get()
-    conn = connect_db("admin")
-    query = 'INSERT INTO food_establishment VALUES (%d,%s,%d,%s)'
-    items = (id,loc,rate,name) 
-    if conn:
-        cur = conn.cursor()
-        try:
-            cur.execute(query, items)
-            conn.commit()
-            messagebox.showinfo("Success", "Query executed successfully.")
-        except mariadb.Error as e:
-            messagebox.showerror("Query Error", f"Error executing query: {e}")
-        finally:
-            conn.close()
 
 # Login Page
 class LoginPage(tk.Frame):
@@ -135,8 +116,56 @@ class LoginPage(tk.Frame):
 class AdminPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
- 
-        #add your features here
+
+        self.estabId = tk.IntVar()
+        self.estabLoc = tk.StringVar()
+        self.estabRating = tk.IntVar()
+        self.estabName = tk.StringVar()
+
+        addEstabIdText = tk.Label(self, text="Enter food establishment ID:")
+        addEstabIdText.grid(pady=10)
+        addEstabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
+        addEstabIdEntry.grid(pady=10)
+
+        addEstabLocText = tk.Label(self, text="Enter food establishment Location:")
+        addEstabLocText.grid(pady=10)
+        addEstabLocEntry = tk.Entry(self, textvariable=self.estabLoc, width=50)
+        addEstabLocEntry.grid(pady=10)
+
+        addEstabRatingText = tk.Label(self, text="Enter food establishment rating:")
+        addEstabRatingText.grid(pady=10)
+        addEstabRatingEntry = tk.Entry(self, textvariable=self.estabRating, width=50)
+        addEstabRatingEntry.grid(pady=10)
+
+        addEstabNameText = tk.Label(self, text="Enter food establishment name:")
+        addEstabNameText.grid(pady=10)
+        addEstabNameEntry = tk.Entry(self, textvariable=self.estabName, width=50)
+        addEstabNameEntry.grid(pady=10)
+
+        addEstablishmentButton = tk.Button(self, text="Add Food Establishment", command=self.addEstablishment)
+        addEstablishmentButton.grid(pady=10)
+
+    # Function for adding the food establishment to the MariaDB
+    def addEstablishment(self):
+        id = self.estabId.get()
+        loc = self.estabLoc.get()
+        rate = self.estabRating.get()
+        name = self.estabName.get()
+        if dbConn:
+            query = 'INSERT INTO food_establishment VALUES (%d,%s,%d,%s)'
+            items = (id, loc, rate, name)
+            cur = dbConn.cursor()
+            try:
+                cur.execute(query, items)
+                dbConn.commit()
+                messagebox.showinfo("Success", "Food establishment added successfully.")
+            except mariadb.Error as e:
+                messagebox.showerror("Query Error", f"Error executing query: {e}")
+            finally:
+                cur.close()
+        else:
+            messagebox.showerror("Database Error", "No database connection established.")
+
   
 class CasualPage(tk.Frame):  
     def __init__(self, parent, controller):
