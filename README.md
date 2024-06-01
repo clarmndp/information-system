@@ -21,6 +21,8 @@ Or alternatively,
 
     python3 app.py
 
+User credentials for logging-in is included in **user-credentials.txt**
+
 ## Developer guidelines
 Always take note of the following notes.
 1. **NEVER directly push nor edit main.** Before coding, always create a branch from the main branch.
