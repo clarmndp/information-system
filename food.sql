@@ -62,3 +62,9 @@ CREATE TABLE IF NOT EXISTS `food_review` (
     CONSTRAINT food_review_establishment_id_fk FOREIGN KEY (`establishment_id`) REFERENCES `food_establishment` (`establishment_id`),
     CONSTRAINT food_review_item_id_fk FOREIGN KEY (`item_id`) REFERENCES `food_item` (`item_id`)
 );
+
+--Insert Data
+INSERT INTO user VALUES (1, 'user@gmail.com', 'useruser', '2002-03-26', 22 );
+INSERT INTO food_establishment VALUES (1, 'elbi', 3, 'koppi' ), (2, 'elbi', 4, 'Jollibee' ), (3, 'elbi', 4, "McDonal/'s" );
+INSERT INTO food_item VALUES (1,'Chicken Joy', 80, 'meat', 'chicken',2 ),(2, 'Yummy Burger', 50, 'Cheese Burger', 'Cheese, beef patty, mayo',3);
+INSERT INTO food_review VALUES (1, 'amazing','2024-04-29', 5,1, 2, 1);

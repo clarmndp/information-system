@@ -76,6 +76,26 @@ def submit():
     if name == 'pares' and password == 'diwataP':
         casual_conn = connect_db("casual")
 
+#function for adding the food establishment to the mariadb
+def addEstablishment ():
+    id = estabId.get()
+    loc = estabLoc.get()
+    rate = estabRating.get()
+    name = estabName.get()
+    conn = connect_db("admin")
+    query = 'INSERT INTO food_establishment VALUES (%d,%s,%d,%s)'
+    items = (id,loc,rate,name) 
+    if conn:
+        cur = conn.cursor()
+        try:
+            cur.execute(query, items)
+            conn.commit()
+            messagebox.showinfo("Success", "Query executed successfully.")
+        except mariadb.Error as e:
+            messagebox.showerror("Query Error", f"Error executing query: {e}")
+        finally:
+            conn.close()
+
 # Login Page
 myLabel = Label(root, text="LogIn", font=('calibre', 10, 'bold'))
 myLabel.grid(row=0, column=0, columnspan=2, pady=10)
@@ -111,5 +131,46 @@ queryButton.grid(pady=10)
 #Reports - display reports in a text field
 resultText = tk.Text(root, height=15, width=80)
 resultText.grid(pady=10)
+
+
+#Add food establishment
+estabId = tk.IntVar()
+estabLoc = tk.StringVar()
+estabRating = tk.IntVar()
+estabName = tk.StringVar()
+
+#estab is
+addEstabIdText = tk.Label(root, text="Enter food establishment id:")
+addEstabIdText.grid(pady=10)
+
+addEstabIdEntry = tk.Entry(root, textvariable=estabId, width=50)
+addEstabIdEntry.grid(pady=10)
+
+#estab loc
+addEstabLocText = tk.Label(root, text="Enter food establishment Location:")
+addEstabLocText.grid(pady=10)
+
+addEstabLocEntry = tk.Entry(root, textvariable=estabLoc, width=50)
+addEstabLocEntry.grid(pady=10)
+
+#estab rating
+addEstabRatingText = tk.Label(root, text="Enter food establishment rating:")
+addEstabRatingText.grid(pady=10)
+
+addEstabRatingEntry = tk.Entry(root, textvariable=estabRating, width=50)
+addEstabRatingEntry.grid(pady=10)
+
+#estab name
+addEstabNameText = tk.Label(root, text="Enter food establishment name:")
+addEstabNameText.grid(pady=10)
+
+addEstabNameEntry = tk.Entry(root, textvariable=estabName, width=50)
+addEstabNameEntry.grid(pady=10)
+
+
+#button for adding 
+addEstablishmentButton = tk.Button(root, text="Add Food Establishment", command=addEstablishment)
+addEstablishmentButton.grid(pady=10)
+
 
 root.mainloop()
