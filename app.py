@@ -27,10 +27,6 @@ def connect_db(user_type):
         messagebox.showerror("Database Connection Error", f"Error connecting to MariaDB Platform: {e}")
         return None
 
-
-#Login Page
-    #verify if user id admin or casual (usertype)
-
 #Features
     #add your features here
 
