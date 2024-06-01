@@ -3,78 +3,78 @@ from tkinter import *
 from tkinter import messagebox
 import mariadb
 
+#MariaDB connection variable to be used for SQL commands
+dbConn = None
+
 # function to connect to the MariaDB database
 def connect_db(user_type):
-    if user_type == "admin":
+    global dbConn
+    if user_type == "Admin":
         user = "foodie"
         password = "chefP!"
-    elif user_type == "casual":
+    elif user_type == "Casual":
         user = "pares"
         password = "diwataP"
     else:
         raise ValueError("Invalid user type")
 
     try:
-        conn = mariadb.connect(
-            user= user,
-            password= password,
-            host="localhost",
-            port=3306,
-            database="food"
+        dbConn = mariadb.connect(
+            user = user,
+            password = password,
+            host = "localhost",
+            port = 3306,
+            database = "food"
         )
         messagebox.showinfo("Database Connection", f"Successfully connected to the database as {user_type}.")
-        return conn
     except mariadb.Error as e:
         messagebox.showerror("Database Connection Error", f"Error connecting to MariaDB Platform: {e}")
+        dbConn = None
+    
+
+#function to determine if user credentials is admin/user to establish mariadb connection
+def loginConn(username, password): 
+    if username == 'foodie' and password == 'chefP!':
+        connect_db("Admin")
+        return AdminPage
+    elif username == 'pares' and password == 'diwataP':
+        connect_db("Casual")
+        return CasualPage
+    else:
+        messagebox.showerror("Login Error", "Invalid username or password")
         return None
 
-#Features
-    #add your features here
 
+#GUI Main Page Frame
+class tkinterApp(tk.Tk):
 
-# Tkinter application
-root = tk.Tk()
-root.title("Food Information System")
+    def __init__(self, *args, **kwargs): 
+         
+        tk.Tk.__init__(self, *args, **kwargs)
+         
+        mainContainer = tk.Frame(self)  
+        mainContainer.pack(side = "top", fill = "both", expand = True) 
+  
+        mainContainer.grid_rowconfigure(0, weight = 1)
+        mainContainer.grid_columnconfigure(0, weight = 1)
+  
+        self.frames = {}  
 
-#function to perform SELECT statements
-def execute_query():
-    query = queryEntry.get()
-    conn = connect_db("admin")
-    if conn:
-        cur = conn.cursor()
-        try:
-            cur.execute(query)
-            if query.lower().startswith("select"):
-                results = cur.fetchall()
-                print(results)
-                resultText.delete(1.0, tk.END)
-                for row in results:
-                    resultText.insert(tk.END, f"{row}\n")
-            else:
-                conn.commit()
-                messagebox.showinfo("Success", "Query executed successfully.")
-        except mariadb.Error as e:
-            messagebox.showerror("Query Error", f"Error executing query: {e}")
-        finally:
-            conn.close()
-
-
-name_var = tk.StringVar()
-passw_var = tk.StringVar()
-
-#function to submit user credentials to establish mariadb connection
-def submit():
-    name = name_var.get()
-    password = passw_var.get()
-    print("The name is : " + name)
-    print("The password is : " + password)
-    name_var.set("")
-    passw_var.set("")
-
-    if name == 'foodie' and password == 'chefP!':
-        admin = connect_db("admin")
-    if name == 'pares' and password == 'diwataP':
-        casual_conn = connect_db("casual")
+        for F in (LoginPage, AdminPage, CasualPage):
+  
+            frame = F(mainContainer, self)
+  
+            #initialized pages/ frames to be displayed in container
+            self.frames[F] = frame 
+  
+            frame.grid(row = 0, column = 0, sticky ="nsew")
+  
+        self.show_frame(LoginPage)
+  
+    #display the current frame passed as parameter
+    def show_frame(self, cont):
+        frame = self.frames[cont]
+        frame.tkraise()
 
 #function for adding the food establishment to the mariadb
 def addEstablishment ():
@@ -97,80 +97,55 @@ def addEstablishment ():
             conn.close()
 
 # Login Page
-myLabel = Label(root, text="LogIn", font=('calibre', 10, 'bold'))
-myLabel.grid(row=0, column=0, columnspan=2, pady=10)
+class LoginPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        
+        #login credentials
+        self.name_var = tk.StringVar()
+        self.passw_var = tk.StringVar()
 
-#username
-name_label = tk.Label(root, text='Username', font=('calibre', 10, 'bold'))
-name_entry = tk.Entry(root, textvariable=name_var, font=('calibre', 10, 'normal'))
+        #page title label
+        loginLabel = tk.Label(self, text="Bite Bank", font=('calibre', 10, 'bold'))
+        loginLabel.grid(row=0, column=0, columnspan=2, pady=10)
 
-#password
-passw_label = tk.Label(root, text='Password', font=('calibre', 10, 'bold'))
-passw_entry = tk.Entry(root, textvariable=passw_var, font=('calibre', 10, 'normal'), show='*')
+        #username
+        nameLabel = tk.Label(self, text='Username', font=('calibre', 10, 'bold'))
+        nameLabel.grid(row=1, column=0, pady=5)
+        nameEntry = tk.Entry(self, textvariable = self.name_var, font=('calibre', 10, 'normal'))
+        nameEntry.grid(row=1, column=1, pady=5)
 
-sub_btn = tk.Button(root, text='Submit', command=submit)
+        #password
+        passLabel = tk.Label(self, text='Password', font=('calibre', 10, 'bold'))
+        passLabel.grid(row=2, column=0, pady=5)
+        passEntry = tk.Entry(self, textvariable = self.passw_var, font=('calibre', 10, 'normal'), show='*')
+        passEntry.grid(row=2, column=1, pady=5)  
+        
+        #function to rooute user to admin page or casual page
+        def directClientToPage():
+            name = self.name_var.get()
+            password = self.passw_var.get()
+            userType = loginConn(name, password)
+            if userType:
+                controller.show_frame(userType)
 
-#styling 
-name_label.grid(row=1, column=0, pady=5)
-name_entry.grid(row=1, column=1, pady=5)
-passw_label.grid(row=2, column=0, pady=5)
-passw_entry.grid(row=2, column=1, pady=5)
-sub_btn.grid(row=3, column=1, pady=10)
+        submitBtn = tk.Button(self, text='Submit', command=directClientToPage)
+        submitBtn.grid(row=3, column=1, pady=10)
 
-#Reports
-queryLabel = tk.Label(root, text="Enter SQL SELECT query to be generated:")
-queryLabel.grid(pady=10)
+class AdminPage(tk.Frame):  
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+ 
+        #add your features here
+  
+class CasualPage(tk.Frame):  
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
 
-#Reports - SELECT statements input field
-queryEntry = tk.Entry(root, width=50)
-queryEntry.grid(pady=10)
-#Reports - execute SELECT statements to generate reports
-queryButton = tk.Button(root, text="Show Reports", command=execute_query)
-queryButton.grid(pady=10)
-
-#Reports - display reports in a text field
-resultText = tk.Text(root, height=15, width=80)
-resultText.grid(pady=10)
-
-
-#Add food establishment
-estabId = tk.IntVar()
-estabLoc = tk.StringVar()
-estabRating = tk.IntVar()
-estabName = tk.StringVar()
-
-#estab is
-addEstabIdText = tk.Label(root, text="Enter food establishment id:")
-addEstabIdText.grid(pady=10)
-
-addEstabIdEntry = tk.Entry(root, textvariable=estabId, width=50)
-addEstabIdEntry.grid(pady=10)
-
-#estab loc
-addEstabLocText = tk.Label(root, text="Enter food establishment Location:")
-addEstabLocText.grid(pady=10)
-
-addEstabLocEntry = tk.Entry(root, textvariable=estabLoc, width=50)
-addEstabLocEntry.grid(pady=10)
-
-#estab rating
-addEstabRatingText = tk.Label(root, text="Enter food establishment rating:")
-addEstabRatingText.grid(pady=10)
-
-addEstabRatingEntry = tk.Entry(root, textvariable=estabRating, width=50)
-addEstabRatingEntry.grid(pady=10)
-
-#estab name
-addEstabNameText = tk.Label(root, text="Enter food establishment name:")
-addEstabNameText.grid(pady=10)
-
-addEstabNameEntry = tk.Entry(root, textvariable=estabName, width=50)
-addEstabNameEntry.grid(pady=10)
+        #add your features here
 
 
-#button for adding 
-addEstablishmentButton = tk.Button(root, text="Add Food Establishment", command=addEstablishment)
-addEstablishmentButton.grid(pady=10)
-
-
+#Tkinter application
+root = tkinterApp()
+root.title("Bite Bank")
 root.mainloop()
