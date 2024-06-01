@@ -5,6 +5,7 @@ GRANT ALL ON food.* TO 'foodie'@'localhost';
 --casual
 CREATE OR REPLACE USER 'pares'@localhost IDENTIFIED BY 'diwataP';
 GRANT INSERT, UPDATE, DELETE ON food.`food_review` TO 'pares'@'localhost';
+GRANT SELECT ON food.`food_item`, food.`food_establishment`, food.`food_review` TO 'pares'@'localhost';
 
 --database creation
 DROP DATABASE IF EXISTS `food`;
