@@ -55,15 +55,19 @@ def execute_query():
 root = tk.Tk()
 root.title("Food Information System")
 
+#Reports
 queryLabel = tk.Label(root, text="Enter the reports you want to view:")
 queryLabel.pack(pady=10)
 
+#input SELECT query here
 queryEntry = tk.Entry(root, width=50)
 queryEntry.pack(pady=10)
 
+#Show button to execute query
 queryButton = tk.Button(root, text="Show", command=execute_query)
 queryButton.pack(pady=10)
 
+#text field for viewing reports
 resultText = tk.Text(root, height=15, width=80)
 resultText.pack(pady=10)
 
