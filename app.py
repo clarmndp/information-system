@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import *
 from tkinter import messagebox
 from tkinter import *
 import mariadb
@@ -27,12 +28,6 @@ def connect_db(user_type):
     except mariadb.Error as e:
         messagebox.showerror("Database Connection Error", f"Error connecting to MariaDB Platform: {e}")
         return None
-
-
-#Login Page
-    #verify if user id admin or casual (usertype)
-    admin_conn = connect_db("admin")
-    casual_conn = connect_db("casual")
 
 #Features
     #add your features here
@@ -75,6 +70,5 @@ name_entry.grid(row=1, column=1, pady=5)
 passw_label.grid(row=2, column=0, pady=5)
 passw_entry.grid(row=2, column=1, pady=5)
 sub_btn.grid(row=3, column=1, pady=10)
-
 
 root.mainloop()
