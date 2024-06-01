@@ -60,7 +60,7 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage, CasualPage, FoodItemAdd):
+        for F in (LoginPage, AdminPage, CasualPage, FoodItemAdd, FoodItemEdit):
   
             frame = F(mainContainer, self)
   
@@ -117,6 +117,7 @@ class AdminPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        # show add text and add button
         textVar = tk.StringVar()
         textVar.set("ADD")
 
@@ -125,6 +126,19 @@ class AdminPage(tk.Frame):
 
         itemAddButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemAdd))
         itemAddButton.pack()
+
+        # show update text and update button
+        textVar2 = tk.StringVar()
+        textVar2.set("UPDATE")
+
+        updateSomethingLabel = tk.Label(self,textvariable=textVar2)
+        updateSomethingLabel.pack()
+
+        itemEditButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemEdit))
+        itemEditButton.pack()
+
+
+
 
 
 class FoodItemAdd(tk.Frame):
@@ -165,8 +179,8 @@ class FoodItemAdd(tk.Frame):
         addItemButton = tk.Button(self, text="Add Food Item", command=self.addItem)
         addItemButton.grid(pady=10)
 
-        itemReturnButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(AdminPage))
-        itemReturnButton.pack()
+        itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
+        itemReturnButton.grid(pady=10)
 
     #add food item to the database
     def addItem(self):
@@ -189,6 +203,59 @@ class FoodItemAdd(tk.Frame):
                 cur.close()
         else:
             messagebox.showerror("Database Error", "No database connection established.")
+
+class FoodItemEdit(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.toUpdate = tk.StringVar()
+        self.newValue = tk.StringVar()
+        self.itemID = tk.IntVar()
+
+        editToUpdateText = tk.Label(self, text="What will you change? (name, price, food_type, ingredient, establishment_id) ")
+        editToUpdateText.grid(pady=10)
+        editToUpdateEntry = tk.Entry(self, textvariable=self.toUpdate, width=50)
+        editToUpdateEntry.grid(pady=10)
+
+        editNewValueText = tk.Label(self, text="Enter new Value.")
+        editNewValueText.grid(pady=10)
+        editNewValueEntry = tk.Entry(self, textvariable=self.newValue, width=50)
+        editNewValueEntry.grid(pady=10)
+
+        editItemIDText = tk.Label(self, text="From what item ID?")
+        editItemIDText.grid(pady=10)
+        editItemIDEntry = tk.Entry(self, textvariable=self.itemID, width=50)
+        editItemIDEntry.grid(pady=10)
+
+        addItemButton = tk.Button(self, text="Edit Food Item", command=self.editItem)
+        addItemButton.grid(pady=10)
+
+        itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
+        itemReturnButton.grid(pady=10)
+
+    #add food item to the database
+    def editItem(self):
+
+        toUpdate = self.toUpdate.get()
+        newValue = self.newValue.get()
+        itemID = self.itemID.get()
+
+        if dbConn:
+            query = f'UPDATE food_item SET {toUpdate} = %s WHERE item_id = %d' # used f string to be able to embed toUpdate so no errors
+            items = (newValue,itemID)
+            cur = dbConn.cursor()
+            try:
+                cur.execute(query, items)
+                dbConn.commit()
+                messagebox.showinfo("Success", "Food establishment edited successfully.")
+            except mariadb.Error as e:
+                messagebox.showerror("Query Error", f"Error executing query: {e}")
+            finally:
+                cur.close()
+        else:
+            messagebox.showerror("Database Error", "No database connection established.")
+
+
 
 
   
