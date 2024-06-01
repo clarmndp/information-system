@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
+from tkinter import *
 import mariadb
 
 # function to connect to the database
@@ -22,6 +23,7 @@ def connect_db(user_type):
             port=3306,
             database="food"
         )
+        messagebox.showinfo("Database Connection", f"Successfully connected to the database as {user_type}.")
         return conn
     except mariadb.Error as e:
         messagebox.showerror("Database Connection Error", f"Error connecting to MariaDB Platform: {e}")
@@ -30,45 +32,43 @@ def connect_db(user_type):
 #Features
     #add your features here
 
-def execute_query():
-    query = queryEntry.get()
-    conn = connect_db("admin")
-    if conn:
-        cur = conn.cursor()
-        try:
-            cur.execute(query)
-            if query.lower().startswith("select"):
-                results = cur.fetchall()
-                print(results)
-                resultText.delete(1.0, tk.END)
-                for row in results:
-                    resultText.insert(tk.END, f"{row}\n")
-            else:
-                conn.commit()
-                messagebox.showinfo("Success", "Query executed successfully.")
-        except mariadb.Error as e:
-            messagebox.showerror("Query Error", f"Error executing query: {e}")
-        finally:
-            conn.close()
 
 # Tkinter application
 root = tk.Tk()
 root.title("Food Information System")
 
-#Reports
-queryLabel = tk.Label(root, text="Enter the reports you want to view:")
-queryLabel.pack(pady=10)
+name_var = tk.StringVar()
+passw_var = tk.StringVar()
 
-#input SELECT query here
-queryEntry = tk.Entry(root, width=50)
-queryEntry.pack(pady=10)
+def submit():
+    name = name_var.get()
+    password = passw_var.get()
+    print("The name is : " + name)
+    print("The password is : " + password)
+    name_var.set("")
+    passw_var.set("")
 
-#Show button to execute query
-queryButton = tk.Button(root, text="Show", command=execute_query)
-queryButton.pack(pady=10)
+    if name == 'foodie' and password == 'chefP!':
+        admin = connect_db("admin")
+    if name == 'pares' and password == 'diwataP':
+        casual_conn = connect_db("casual")
 
-#text field for viewing reports
-resultText = tk.Text(root, height=15, width=80)
-resultText.pack(pady=10)
+# Login Page
+myLabel = Label(root, text="LogIn", font=('calibre', 10, 'bold'))
+myLabel.grid(row=0, column=0, columnspan=2, pady=10)
+
+name_label = tk.Label(root, text='Username', font=('calibre', 10, 'bold'))
+name_entry = tk.Entry(root, textvariable=name_var, font=('calibre', 10, 'normal'))
+
+passw_label = tk.Label(root, text='Password', font=('calibre', 10, 'bold'))
+passw_entry = tk.Entry(root, textvariable=passw_var, font=('calibre', 10, 'normal'), show='*')
+
+sub_btn = tk.Button(root, text='Submit', command=submit)
+
+name_label.grid(row=1, column=0, pady=5)
+name_entry.grid(row=1, column=1, pady=5)
+passw_label.grid(row=2, column=0, pady=5)
+passw_entry.grid(row=2, column=1, pady=5)
+sub_btn.grid(row=3, column=1, pady=10)
 
 root.mainloop()
