@@ -60,7 +60,7 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage, CasualPage, FoodItemAdd, FoodItemEdit):
+        for F in (LoginPage, AdminPage, CasualPage, FoodItemAdd, FoodItemEdit, FoodItemDelete):
   
             frame = F(mainContainer, self)
   
@@ -137,6 +137,16 @@ class AdminPage(tk.Frame):
         itemEditButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemEdit))
         itemEditButton.pack()
 
+        # show delete text and delete button
+        textVar3 = tk.StringVar()
+        textVar3.set("DELETE")
+
+        deleteSomethingLabel = tk.Label(self,textvariable=textVar3)
+        deleteSomethingLabel.pack()
+
+        itemDeleteButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemDelete))
+        itemDeleteButton.pack()
+
 
 
 
@@ -196,7 +206,7 @@ class FoodItemAdd(tk.Frame):
             try:
                 cur.execute(query, items)
                 dbConn.commit()
-                messagebox.showinfo("Success", "Food establishment added successfully.")
+                messagebox.showinfo("Success", "Food item added successfully.")
             except mariadb.Error as e:
                 messagebox.showerror("Query Error", f"Error executing query: {e}")
             finally:
@@ -247,7 +257,43 @@ class FoodItemEdit(tk.Frame):
             try:
                 cur.execute(query, items)
                 dbConn.commit()
-                messagebox.showinfo("Success", "Food establishment edited successfully.")
+                messagebox.showinfo("Success", "Food item edited successfully.")
+            except mariadb.Error as e:
+                messagebox.showerror("Query Error", f"Error executing query: {e}")
+            finally:
+                cur.close()
+        else:
+            messagebox.showerror("Database Error", "No database connection established.")
+
+class FoodItemDelete(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.itemID = tk.IntVar()
+
+        editItemIDText = tk.Label(self, text="What is the Food Item's Id that you will delete")
+        editItemIDText.grid(pady=10)
+        editItemIDEntry = tk.Entry(self, textvariable=self.itemID, width=50)
+        editItemIDEntry.grid(pady=10)
+
+        addItemButton = tk.Button(self, text="Delete Food Item", command=self.deleteItem)
+        addItemButton.grid(pady=10)
+
+        itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
+        itemReturnButton.grid(pady=10)
+
+    #add food item to the database
+    def deleteItem(self):
+
+        itemID = self.itemID.get()
+
+        if dbConn:
+            query = f'DELETE FROM food_item WHERE item_id = {itemID}'
+            cur = dbConn.cursor()
+            try:
+                cur.execute(query)
+                dbConn.commit()
+                messagebox.showinfo("Success", "Food item deleted successfully.")
             except mariadb.Error as e:
                 messagebox.showerror("Query Error", f"Error executing query: {e}")
             finally:
