@@ -30,7 +30,6 @@ def connect_db(user_type):
     except mariadb.Error as e:
         messagebox.showerror("Database Connection Error", f"Error connecting to MariaDB Platform: {e}")
         dbConn = None
-    
 
 #function to determine if user credentials is admin/user to establish mariadb connection
 def loginConn(username, password): 
@@ -43,7 +42,6 @@ def loginConn(username, password):
     else:
         messagebox.showerror("Login Error", "Invalid username or password")
         return None
-
 
 #GUI Main Page Frame
 class tkinterApp(tk.Tk):
@@ -60,7 +58,7 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage, CasualPage, FoodItemAdd, FoodItemEdit, FoodItemDelete):
+        for F in (LoginPage, AdminPage, CasualPage, ReportsPage, FoodItemAdd, FoodItemEdit, FoodItemDelete):
   
             frame = F(mainContainer, self)
   
@@ -76,7 +74,6 @@ class tkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-
 # Login Page
 class LoginPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -87,7 +84,7 @@ class LoginPage(tk.Frame):
         self.passw_var = tk.StringVar()
 
         #page title label
-        loginLabel = tk.Label(self, text="Bite Bank", font=('calibre', 10, 'bold'))
+        loginLabel = tk.Label(self, text="Bite Bank", font=('calibre', 20, 'bold'))
         loginLabel.grid(row=0, column=0, columnspan=2, pady=10)
 
         #username
@@ -146,10 +143,12 @@ class AdminPage(tk.Frame):
 
         itemDeleteButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemDelete))
         itemDeleteButton.pack()
-
-
-
-
+        
+        #route to Reports page
+        reportsLabel = tk.Label(self, text='Reports', font=('calibre', 10, 'bold'))
+        reportsLabel.grid(row=6, column=0, pady=5)
+        reportsBtn = tk.Button(self, text = 'Go', command=lambda: controller.show_frame(ReportsPage))
+        reportsBtn.grid(row=6, column=1, columnspan=2, pady=5)
 
 class FoodItemAdd(tk.Frame):
     def __init__(self, parent, controller):
@@ -221,7 +220,11 @@ class FoodItemEdit(tk.Frame):
         self.toUpdate = tk.StringVar()
         self.newValue = tk.StringVar()
         self.itemID = tk.IntVar()
-
+        
+        #page title label
+        adminLabel = tk.Label(self, text="Admin Dashboard", font=('calibre', 20, 'bold'))
+        adminLabel.grid(row=0, column=0, columnspan=2, pady=10)
+        
         editToUpdateText = tk.Label(self, text="What will you change? (name, price, food_type, ingredient, establishment_id) ")
         editToUpdateText.grid(pady=10)
         editToUpdateEntry = tk.Entry(self, textvariable=self.toUpdate, width=50)
@@ -301,16 +304,58 @@ class FoodItemDelete(tk.Frame):
         else:
             messagebox.showerror("Database Error", "No database connection established.")
 
-
-
-
-  
 class CasualPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
         #add your features here
 
+class ReportsPage(tk.Frame):  
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.query_var = tk.StringVar()
+
+        #page title label
+        reportsLabel = tk.Label(self, text='Reports Page', font=('calibre', 20, 'bold'))
+        reportsLabel.grid(pady=10)
+
+        #select query input
+        queryLabel = tk.Label(self, text='Input SQL SELECT statements \n for reports to generate', font=('calibre', 10))
+        queryLabel.grid(pady=10)
+        queryEntry = tk.Entry(self, textvariable = self.query_var, width=40, font=('calibre', 10, 'normal'))
+        queryEntry.grid(pady=10)
+        
+        def generateReport():
+            query = queryEntry.get()
+            global dbConn
+            if dbConn:
+                cur = dbConn.cursor()
+                try:
+                    cur.execute(query)
+                    if query.lower().startswith("select"):
+                        results = cur.fetchall()
+                        reportsContainer.delete(1.0, tk.END)
+                        for row in results:
+                            reportsContainer.insert(tk.END, f"{row}\n")
+                    else:
+                       dbConn.commit()
+                       messagebox.showinfo("Success", "Query executed successfully.")
+                except mariadb.Error as e:
+                   messagebox.showerror("Query Error", f"Error executing query: {e}")
+                finally:
+                    dbConn.close()
+
+        #execute SQL statement
+        generateBtn = tk.Button(self, text='Generate Reports', command=generateReport)
+        generateBtn.grid(pady=10)
+
+        #display results/reports here
+        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer.grid(pady=10)
+
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(AdminPage))
+        returnBtn.grid(pady=10)
 
 #Tkinter application
 root = tkinterApp()
