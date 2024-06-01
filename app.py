@@ -60,7 +60,7 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage, CasualPage):
+        for F in (LoginPage, AdminPage, CasualPage, AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment ):
   
             frame = F(mainContainer, self)
   
@@ -117,15 +117,54 @@ class AdminPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        # self.estabId = tk.IntVar()
+          # show add text and add button
+        textVar = tk.StringVar()
+        textVar.set("ADD")
+
+        addSomethingLabel = tk.Label(self,textvariable=textVar)
+        addSomethingLabel.grid(row=0, column=1, columnspan=2, pady=10)
+        #addSomethingLabel.pack()
+
+        itemAddButton = tk.Button(self, text="Item", command=lambda: controller.show_frame())
+        itemAddButton.grid(row=1, column=1, pady=5, padx=10)
+        #itemAddButton.pack(row=0, column=0,pady=15)
+
+        establishmentAddButton = tk.Button(self, text="Establishment", command=lambda: controller.show_frame(AddFoodEstablishment))
+        establishmentAddButton.grid(row=1, column=2, pady=5, padx=10)
+        #establishmentAddButton.pack(pady=15)
+
+        # show update text and update button
+        textVar2 = tk.StringVar()
+        textVar2.set("UPDATE")
+
+        updateSomethingLabel = tk.Label(self,textvariable=textVar2)
+        updateSomethingLabel.grid(row=2, column=1, columnspan=2, pady=10)
+
+        itemEditButton = tk.Button(self, text="Item", command=lambda: controller.show_frame())
+        itemEditButton.grid(row=3, column=1, pady=5, padx=10)
+
+        establishmentEditButton = tk.Button(self, text="Establishment", command=lambda: controller.show_frame(EditFoodEstablishment))
+        establishmentEditButton.grid(row=3, column=2,  pady=5, padx=10)
+        # show delete text and delete button
+        textVar3 = tk.StringVar()
+        textVar3.set("DELETE")
+
+        deleteSomethingLabel = tk.Label(self,textvariable=textVar3)
+        deleteSomethingLabel.grid(row=4, column=1, columnspan=2, pady=10)
+
+        itemDeleteButton = tk.Button(self, text="Item", command=lambda: controller.show_frame())
+        itemDeleteButton.grid(row=5, column=1, pady=5, padx=10)
+
+        establishmentDeleteButton = tk.Button(self, text="Establishment", command=lambda: controller.show_frame(DeleteFoodEstablishment))
+        establishmentDeleteButton.grid(row=5, column=2, pady=5, padx=10)
+  
+class AddFoodEstablishment(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
         self.estabLoc = tk.StringVar()
         self.estabRating = tk.IntVar()
         self.estabName = tk.StringVar()
-
-        # addEstabIdText = tk.Label(self, text="Enter food establishment ID:")
-        # # addEstabIdText.grid(pady=10)
-        # addEstabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
-        # addEstabIdEntry.grid(pady=10)
 
         addEstabLocText = tk.Label(self, text="Enter food establishment Location:")
         addEstabLocText.grid(pady=10)
@@ -144,6 +183,9 @@ class AdminPage(tk.Frame):
 
         addEstablishmentButton = tk.Button(self, text="Add Food Establishment", command=self.addEstablishment)
         addEstablishmentButton.grid(pady=10)
+        
+        itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
+        itemReturnButton.grid(pady=10)
 
     # Function for adding the food establishment to the MariaDB
     def addEstablishment(self):
@@ -166,7 +208,92 @@ class AdminPage(tk.Frame):
         else:
             messagebox.showerror("Database Error", "No database connection established.")
 
-  
+
+class EditFoodEstablishment(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.toUpdate = tk.StringVar()
+        self.newValue = tk.StringVar()
+        self.estabID = tk.IntVar()
+
+        editToUpdateText = tk.Label(self, text="What will you change? (establishment_name, location, rating) ")
+        editToUpdateText.grid(pady=10)
+        editToUpdateEntry = tk.Entry(self, textvariable=self.toUpdate, width=50)
+        editToUpdateEntry.grid(pady=10)
+
+        editNewValueText = tk.Label(self, text="Enter new Value.")
+        editNewValueText.grid(pady=10)
+        editNewValueEntry = tk.Entry(self, textvariable=self.newValue, width=50)
+        editNewValueEntry.grid(pady=10)
+
+        estabIDText = tk.Label(self, text="From what establishment ID?")
+        estabIDText.grid(pady=10)
+        editItemIDEntry = tk.Entry(self, textvariable=self.estabID, width=50)
+        editItemIDEntry.grid(pady=10)
+
+        addItemButton = tk.Button(self, text="Edit Food Item", command=self.editItem)
+        addItemButton.grid(pady=10)
+
+        itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
+        itemReturnButton.grid(pady=10)
+
+    def editItem(self):
+
+        toUpdate = self.toUpdate.get()
+        newValue = self.newValue.get()
+        estabID = self.estabID.get()
+
+        if dbConn:
+            query = f'UPDATE food_establishment SET {toUpdate} = %s WHERE establishment_id = %d' # used f string to be able to embed toUpdate so no errors
+            items = (newValue,estabID)
+            cur = dbConn.cursor()
+            try:
+                cur.execute(query, items)
+                dbConn.commit()
+                messagebox.showinfo("Success", "Food Establishment edited successfully.")
+            except mariadb.Error as e:
+                messagebox.showerror("Query Error", f"Error executing query: {e}")
+            finally:
+                cur.close()
+        else:
+            messagebox.showerror("Database Error", "No database connection established.")
+
+class DeleteFoodEstablishment(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+    
+        self.estabId = tk.StringVar()
+        
+        deleteEstab = tk.Label(self, text="Enter food establishment ID you want to delete:")
+        deleteEstab.grid(pady=10)
+        estabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
+        estabIdEntry.grid(pady=10)
+
+        deleteButton = tk.Button(self, text="Delete Food Establishment", command=self.deleteEstablishment)
+        deleteButton.grid(pady=10)
+
+        itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
+        itemReturnButton.grid(pady=10)
+
+    def deleteEstablishment(self):
+        estabID = self.estabId.get()
+        if dbConn:
+            query = f'DELETE FROM food_establishment WHERE establishment_id = {estabID}'
+            cur = dbConn.cursor()
+            try:
+                cur.execute(query)
+                dbConn.commit()
+                messagebox.showinfo("Success", "Food Establishment deleted successfully.")
+            except mariadb.Error as e:
+                messagebox.showerror("Query Error", f"Error executing query: {e}")
+            finally:
+                cur.close()
+        else:
+            messagebox.showerror("Database Error", "No database connection established.")
+
+
+
 class CasualPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)

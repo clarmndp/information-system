@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `food_item` (
     `ingredient` VARCHAR(25) NOT NULL DEFAULT '',
     `establishment_id` INT(4),
     CONSTRAINT food_item_item_id_pk PRIMARY KEY (`item_id`),
-    CONSTRAINT food_item_establishment_id_fk FOREIGN KEY (`establishment_id`) REFERENCES `food_establishment` (`establishment_id`)
+    CONSTRAINT food_item_establishment_id_fk FOREIGN KEY (`establishment_id`) REFERENCES `food_establishment` (`establishment_id`) ON DELETE CASCADE
 );
 
 --food review table
@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS `food_review` (
     `item_id` INT(4) DEFAULT NULL, 
     CONSTRAINT food_review_review_id_pk PRIMARY KEY (`review_id`),
     CONSTRAINT food_review_user_id_fk FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-    CONSTRAINT food_review_establishment_id_fk FOREIGN KEY (`establishment_id`) REFERENCES `food_establishment` (`establishment_id`),
-    CONSTRAINT food_review_item_id_fk FOREIGN KEY (`item_id`) REFERENCES `food_item` (`item_id`)
+    CONSTRAINT food_review_establishment_id_fk FOREIGN KEY (`establishment_id`) REFERENCES `food_establishment` (`establishment_id`) ON DELETE SET NULL,
+    CONSTRAINT food_review_item_id_fk FOREIGN KEY (`item_id`) REFERENCES `food_item` (`item_id`) ON DELETE SET NULL
 );
 
 --Insert Data
