@@ -117,15 +117,15 @@ class AdminPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        self.estabId = tk.IntVar()
+        # self.estabId = tk.IntVar()
         self.estabLoc = tk.StringVar()
         self.estabRating = tk.IntVar()
         self.estabName = tk.StringVar()
 
-        addEstabIdText = tk.Label(self, text="Enter food establishment ID:")
-        addEstabIdText.grid(pady=10)
-        addEstabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
-        addEstabIdEntry.grid(pady=10)
+        # addEstabIdText = tk.Label(self, text="Enter food establishment ID:")
+        # # addEstabIdText.grid(pady=10)
+        # addEstabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
+        # addEstabIdEntry.grid(pady=10)
 
         addEstabLocText = tk.Label(self, text="Enter food establishment Location:")
         addEstabLocText.grid(pady=10)
@@ -147,13 +147,13 @@ class AdminPage(tk.Frame):
 
     # Function for adding the food establishment to the MariaDB
     def addEstablishment(self):
-        id = self.estabId.get()
+        # id = self.estabId.get()
         loc = self.estabLoc.get()
         rate = self.estabRating.get()
         name = self.estabName.get()
         if dbConn:
-            query = 'INSERT INTO food_establishment VALUES (%d,%s,%d,%s)'
-            items = (id, loc, rate, name)
+            query = 'INSERT INTO food_establishment VALUES (NULL,%s,%d,%s)'
+            items = (loc, rate, name)
             cur = dbConn.cursor()
             try:
                 cur.execute(query, items)
