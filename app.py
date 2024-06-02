@@ -65,7 +65,7 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage, CasualPage, SearchPage, FoodItemAdd, FoodItemEdit, FoodItemDelete, ItemReviewAdd, EstabReviewAdd, ReviewUpdate, ReviewDelete, AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ViewItemEstablishment, ViewItemBasedType, ViewFoodEstablishment, ViewEstabReview, ViewItemReview, ViewReviews, ViewEstablishmentBasedRating, ViewItemsBasedPrice, ViewItemsPriceRangeEstab):
+        for F in (LoginPage, AdminPage, CasualPage, SearchPage, FoodItemAdd, FoodItemEdit, FoodItemDelete, ItemReviewAdd, EstabReviewAdd, ReviewUpdate, ReviewDelete, AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ViewItemEstablishment, ViewItemBasedType, ViewFoodEstablishment, ViewEstabReview, ViewItemReview, ViewReviews, ViewEstablishmentBasedRating, ViewItemsBasedPrice, ViewItemsPriceRangeEstab, ReviewsWithinMonth):
   
             frame = F(mainContainer, self)
   
@@ -1185,7 +1185,7 @@ class ReviewsWithinMonth(tk.Frame):
         reportsContainer = tk.Text(self, height=15, width=50)
         reportsContainer.grid(pady=10)
 
-        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(ReportsPage))
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(SearchPage))
         returnBtn.grid(pady=10)
 
 
@@ -1394,7 +1394,7 @@ class SearchPage(tk.Frame):
         report4Button.grid(pady=10)
 
         #REPORT 5
-        report4Button = tk.Button(self, text=" View Food Item Based On Food Type", command=lambda: controller.show_frame(ReviewsWithinMonth))
+        report4Button = tk.Button(self, text=" View Review Within A Month", command=lambda: controller.show_frame(ReviewsWithinMonth))
         report4Button.grid(pady=10)
 
         #REPORT 6
