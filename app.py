@@ -1394,8 +1394,8 @@ class SearchPage(tk.Frame):
         report4Button.grid(pady=10)
 
         #REPORT 5
-        report4Button = tk.Button(self, text=" View Review Within A Month", command=lambda: controller.show_frame(ReviewsWithinMonth))
-        report4Button.grid(pady=10)
+        report5Button = tk.Button(self, text=" View Review Within A Month", command=lambda: controller.show_frame(ReviewsWithinMonth))
+        report5Button.grid(pady=10)
 
         #REPORT 6
         report6Button = tk.Button(self, text=" View High-Rated Food Establishments", command=lambda: controller.show_frame(ViewEstablishmentBasedRating))
