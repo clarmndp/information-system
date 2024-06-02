@@ -141,23 +141,20 @@ class AdminPage(tk.Frame):
 
 
         itemEditButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemEdit))
-        itemEditButton.grid(row=4, column=1, pady=5, padx=10)
+        itemEditButton.grid(row=4, column=0, pady=5, padx=10)
 
         establishmentEditButton = tk.Button(self, text="Establishment", command=lambda: controller.show_frame(EditFoodEstablishment))
-        establishmentEditButton.grid(row=4, column=2,  pady=5, padx=10)
+        establishmentEditButton.grid(row=4, column=1,  pady=5, padx=10)
 
         # show delete text and delete button
-        textVar3 = tk.StringVar()
-        textVar3.set("DELETE")
-
-        deleteSomethingLabel = tk.Label(self,textvariable=textVar3)
-        deleteSomethingLabel.grid(row=5, column=1, columnspan=2, pady=10)
+        deleteSomethingLabel = tk.Label(self, text="Delete", font=('calibre', 10, 'bold'))
+        deleteSomethingLabel.grid(row=5, column=0, columnspan=2, pady=10)
 
         itemDeleteButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemDelete))
-        itemDeleteButton.grid(row=6, column=1, pady=5, padx=10)
+        itemDeleteButton.grid(row=6, column=0, pady=5, padx=10)
 
         establishmentDeleteButton = tk.Button(self, text="Establishment", command=lambda: controller.show_frame(DeleteFoodEstablishment))
-        establishmentDeleteButton.grid(row=6, column=2, pady=5, padx=10)
+        establishmentDeleteButton.grid(row=6, column=1, pady=5, padx=10)
 
         reportsLabel = tk.Label(self, text='Reports', font=('calibre', 10, 'bold'))
         reportsLabel.grid(row=7, column=0, pady=5)
