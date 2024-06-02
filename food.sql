@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 ); 
 
 --initial user
-INSERT INTO `user` (`email`, `password`, `birthday`, `age`) VALUES ('pares@example.com', 'diwataP', '1990-01-01', 21);
+INSERT INTO `user` (`email`, `password`, `birthday`, `age`) VALUES ('pares@example.com', 'diwataP', '1998-01-01', 26);
 
 --food establishment table
 DROP TABLE IF EXISTS `food_establishment`;
