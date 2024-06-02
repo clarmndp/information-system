@@ -24,6 +24,9 @@ CREATE TABLE IF NOT EXISTS `user` (
     CONSTRAINT user_user_id_pk PRIMARY KEY (`user_id`)
 ); 
 
+--initial user
+INSERT INTO `user` (`email`, `password`, `birthday`, `age`) VALUES ('pares@example.com', 'diwataP', '1990-01-01', 21);
+
 --food establishment table
 DROP TABLE IF EXISTS `food_establishment`;
 CREATE TABLE IF NOT EXISTS `food_establishment` (
