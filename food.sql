@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 ); 
 
 --initial user
-INSERT INTO `user` (`email`, `password`, `birthday`, `age`) VALUES ('pares@example.com', 'diwataP', '1998-01-01', 26);
+INSERT INTO `user` (`email`, `password`, `birthday`, `age`) VALUES ('pares@example.com', 'diwataP', '1990-01-01', 21);
 
 --food establishment table
 DROP TABLE IF EXISTS `food_establishment`;
@@ -67,7 +67,32 @@ CREATE TABLE IF NOT EXISTS `food_review` (
 );
 
 --Insert Data
-INSERT INTO user VALUES (1, 'user@gmail.com', 'useruser', '2002-03-26', 22 );
-INSERT INTO food_establishment VALUES (1, 'elbi', 3, 'koppi' ), (2, 'elbi', 4, 'Jollibee' ), (3, 'elbi', 4, "McDonal/'s" );
-INSERT INTO food_item VALUES (1,'Chicken Joy', 80, 'meat', 'chicken',2 ),(2, 'Yummy Burger', 50, 'Cheese Burger', 'Cheese, beef patty, mayo',3);
-INSERT INTO food_review VALUES (1, 'amazing','2024-04-29', 5,1, 2, 1);
+
+INSERT INTO user (`email`, `password`, `birthday`, `age`) VALUES ( 'user@gmail.com', 'useruser', '2002-03-26', 22 );
+
+INSERT INTO food_establishment (`location`,`rating`,`establishment_name`) VALUES 
+    ( 'Los Baños', 3, 'koppi' ), 
+    ( 'Los Baños', 4, 'Jollibee' ), 
+    ( 'Los Baños', 4, "McDonal/'s" ), 
+    ( 'Los Baños', 4, 'Dimsum'),
+    ( 'Los Baños', 3, 'Minute Burger'),
+    ( 'Los Baños', 4, 'WeDeliver'),
+    ( 'Calamba', 5, 'Mang Inasal'),
+    ( 'Calamba', 4, "Dunkin/'"), 
+    ( 'Calamba', 5, "Max/'s Restaurant");
+
+
+INSERT INTO food_item (`name`, `price`, `food_type`, `ingredient`, `establishment_id`) VALUES 
+    ('Chicken Joy', 80, 'meat', 'chicken', 2 ),
+    ('Yummy Burger', 50, 'meat', 'Cheese, beef patty, mayo', 3),
+    ('Spaghetti', 55, 'pasta', 'noodles, tomato sauce', 2),
+    ('Burger Steak', 70, 'meat', 'beef patty, gravy', 2),
+    ('Chicken Sandwich', 45, 'sandwich', 'chicken, bread', 4),
+    ('Halo-Halo', 90, 'dessert', 'ice, milk, sweets', 5),
+    ('Pancit Canton', 60, 'noodles', 'noodles, vegetables', 6),
+    ('Hotdog Sandwich', 40, 'sandwich', 'hotdog, bread', 7),
+    ('Cheesy Fries', 35, 'snack', 'fries, cheese', 8),
+    ('Chicken Nuggets', 65, 'snack', 'chicken', 9);
+    
+INSERT INTO food_review (`feedback`, `date_of_review`, `rating`, `user_id`, `establishment_id`, `item_id`) VALUES 
+    ('amazing','2024-04-29', 5, 1, 2, 1);

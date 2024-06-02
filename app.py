@@ -67,7 +67,8 @@ class tkinterApp(tk.Tk):
         self.frames = {}  
 
 
-        for F in (LoginPage, AdminPage, CasualPage, ReportsPage, FoodItemAdd, FoodItemEdit, FoodItemDelete, ItemReviewAdd, EstabReviewAdd, ReviewUpdate, ReviewDelete , AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment):
+        for F in (LoginPage, AdminPage, CasualPage, ReportsPage, FoodItemAdd, FoodItemEdit, FoodItemDelete, ItemReviewAdd, EstabReviewAdd, ReviewUpdate, ReviewDelete,
+                   AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ViewItemEstablishment, ViewItemBasedType):
   
             frame = F(mainContainer, self)
   
@@ -176,6 +177,9 @@ class AddFoodEstablishment(tk.Frame):
         self.estabRating = tk.IntVar()
         self.estabName = tk.StringVar()
 
+        updateFoodEstabLabel = tk.Label(self, text="Add Food Establishment", font=('calibre', 20, 'bold'))
+        updateFoodEstabLabel.grid(pady=10)
+
         addEstabLocText = tk.Label(self, text="Enter food establishment Location:")
         addEstabLocText.grid(pady=10)
         addEstabLocEntry = tk.Entry(self, textvariable=self.estabLoc, width=50)
@@ -191,7 +195,7 @@ class AddFoodEstablishment(tk.Frame):
         addEstabNameEntry = tk.Entry(self, textvariable=self.estabName, width=50)
         addEstabNameEntry.grid(pady=10)
 
-        addEstablishmentButton = tk.Button(self, text="Add Food Establishment", command=self.addEstablishment)
+        addEstablishmentButton = tk.Button(self, text="Add", command=self.addEstablishment)
         addEstablishmentButton.grid(pady=10)
         
         itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
@@ -227,6 +231,9 @@ class EditFoodEstablishment(tk.Frame):
         self.newValue = tk.StringVar()
         self.estabID = tk.IntVar()
 
+        updateFoodEstabLabel = tk.Label(self, text="Update Food Establishment", font=('calibre', 20, 'bold'))
+        updateFoodEstabLabel.grid(pady=10)
+
         editToUpdateText = tk.Label(self, text="What will you change? (establishment_name, location, rating) ")
         editToUpdateText.grid(pady=10)
         editToUpdateEntry = tk.Entry(self, textvariable=self.toUpdate, width=50)
@@ -242,7 +249,7 @@ class EditFoodEstablishment(tk.Frame):
         editItemIDEntry = tk.Entry(self, textvariable=self.estabID, width=50)
         editItemIDEntry.grid(pady=10)
 
-        addItemButton = tk.Button(self, text="Edit Food Item", command=self.editItem)
+        addItemButton = tk.Button(self, text="Update", command=self.editItem)
         addItemButton.grid(pady=10)
 
         itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
@@ -274,13 +281,16 @@ class DeleteFoodEstablishment(tk.Frame):
         tk.Frame.__init__(self, parent)
     
         self.estabId = tk.StringVar()
+
+        deleteFoodEstabLabel = tk.Label(self, text="Delete Food Establishment", font=('calibre', 20, 'bold'))
+        deleteFoodEstabLabel.grid(pady=10)
         
         deleteEstab = tk.Label(self, text="Enter food establishment ID you want to delete:")
         deleteEstab.grid(pady=10)
         estabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
         estabIdEntry.grid(pady=10)
 
-        deleteButton = tk.Button(self, text="Delete Food Establishment", command=self.deleteEstablishment)
+        deleteButton = tk.Button(self, text="Delete", command=self.deleteEstablishment)
         deleteButton.grid(pady=10)
 
         itemReturnButton = tk.Button(self, text="Return", command=lambda: controller.show_frame(AdminPage))
@@ -762,14 +772,14 @@ class ReviewDelete(tk.Frame):
 
 
 
-        
-
-
 class ViewItemEstablishment(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
 
         self.estabId = tk.StringVar()
+
+        viewItemLabel = tk.Label(self, text="View Food Items in Establishment", font=('calibre', 20, 'bold'))
+        viewItemLabel.grid(row=0, column=0, columnspan=2, pady=10)
         
         viewItemEstab = tk.Label(self, text="Enter food establishment ID:")
         viewItemEstab.grid(pady=10)
@@ -780,8 +790,8 @@ class ViewItemEstablishment(tk.Frame):
         def viewItems():
             estabID = self.estabId.get()
 
-            if dbConn:
-                query = f'SELECT * FROM food_item i LEFT JOIN food_establishment e ON i.establishment_id = e.establishment_id WHERE i.establishment_id = {estabID}'
+            if dbConn:    #change to *
+                query = f'SELECT i.name, i.price, i.ingredient FROM food_item i LEFT JOIN food_establishment e ON i.establishment_id = e.establishment_id WHERE i.establishment_id = {estabID}'
                 cur = dbConn.cursor()
                 try:
                     cur.execute(query)
@@ -805,7 +815,7 @@ class ViewItemEstablishment(tk.Frame):
         reportsContainer = tk.Text(self, height=15, width=50)
         reportsContainer.grid(pady=10)
 
-        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(CasualPage))
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(ReportsPage))
         returnBtn.grid(pady=10)
 
 class ViewItemBasedType(tk.Frame):
@@ -814,6 +824,11 @@ class ViewItemBasedType(tk.Frame):
 
         self.estabId = tk.StringVar()
         self.foodType = tk.StringVar() 
+
+        
+        viewItemTypeLabel = tk.Label(self, text="View Food Items by their Food Type", font=('calibre', 20, 'bold'))
+        viewItemTypeLabel.grid(row=0, column=0, columnspan=2, pady=10)
+        
         
         viewItemEstab = tk.Label(self, text="Enter food establishment ID:")
         viewItemEstab.grid(pady=10)
@@ -830,8 +845,8 @@ class ViewItemBasedType(tk.Frame):
             estabID = self.estabId.get()
             foodType = self.foodType.get()
 
-            if dbConn:
-                query = f'SELECT * FROM food_item i LEFT JOIN food_establishment e ON i.establishment_id = e.establishment_id WHERE i.establishment_id = %s AND i.food_type=%s'
+            if dbConn:      #change to *
+                query = f'SELECT i.name, i.price, i.ingredient FROM food_item i LEFT JOIN food_establishment e ON i.establishment_id = e.establishment_id WHERE i.establishment_id = %s AND i.food_type=%s'
                 items = (estabID, foodType)
                 cur = dbConn.cursor()
                 try:
@@ -857,9 +872,10 @@ class ViewItemBasedType(tk.Frame):
         reportsContainer = tk.Text(self, height=15, width=50)
         reportsContainer.grid(pady=10)
 
-        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(CasualPage))
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(ReportsPage))
         returnBtn.grid(pady=10)
         #add your features here
+        
 class ReportsPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -871,6 +887,12 @@ class ReportsPage(tk.Frame):
         #page title label
         reportsLabel = tk.Label(self, text='Reports Page', font=('calibre', 20, 'bold'))
         reportsLabel.grid(pady=10)
+
+        itemEstabButton = tk.Button(self, text=" View Item from Establishment", command=lambda: controller.show_frame(ViewItemEstablishment))
+        itemEstabButton.grid(pady=10)
+
+        itemBasedTypeButton = tk.Button(self, text=" View Item Based On Food Type in Establishment", command=lambda: controller.show_frame(ViewItemBasedType))
+        itemBasedTypeButton.grid(pady=10)
 
         #select query input
         queryLabel = tk.Label(self, text='Input SQL SELECT statements \n for reports to generate', font=('calibre', 10))
