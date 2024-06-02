@@ -300,6 +300,10 @@ class FoodItemAdd(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        #page title label
+        addFoodItemLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        addFoodItemLabel.grid(pady=10)
+
         self.itemName = tk.StringVar()
         self.itemPrice = tk.IntVar()
         self.itemFoodType = tk.StringVar()
@@ -368,8 +372,8 @@ class FoodItemEdit(tk.Frame):
         self.itemID = tk.IntVar()
         
         #page title label
-        adminLabel = tk.Label(self, text="Admin Dashboard", font=('calibre', 20, 'bold'))
-        adminLabel.grid(row=0, column=0, columnspan=2, pady=10)
+        editFoodItemLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        editFoodItemLabel.grid(pady=10)
         
         editToUpdateText = tk.Label(self, text="What will you change? (name, price, food_type, ingredient, establishment_id) ")
         editToUpdateText.grid(pady=10)
@@ -381,7 +385,7 @@ class FoodItemEdit(tk.Frame):
         editNewValueEntry = tk.Entry(self, textvariable=self.newValue, width=50)
         editNewValueEntry.grid(pady=10)
 
-        editItemIDText = tk.Label(self, text="From what item ID?")
+        editItemIDText = tk.Label(self, text="Item ID of item:")
         editItemIDText.grid(pady=10)
         editItemIDEntry = tk.Entry(self, textvariable=self.itemID, width=50)
         editItemIDEntry.grid(pady=10)
@@ -420,7 +424,7 @@ class FoodItemDelete(tk.Frame):
 
         self.itemID = tk.IntVar()
 
-        editItemIDText = tk.Label(self, text="What is the Food Item's Id that you will delete")
+        editItemIDText = tk.Label(self, text="Food ID to delete:")
         editItemIDText.grid(pady=10)
         editItemIDEntry = tk.Entry(self, textvariable=self.itemID, width=50)
         editItemIDEntry.grid(pady=10)
@@ -499,6 +503,10 @@ class ItemReviewAdd(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        #page title label
+        itemReviewAddLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        itemReviewAddLabel.grid(pady=10)
+
         #input field variables
         self.feedback = tk.StringVar()
         self.date = tk.StringVar()
@@ -564,6 +572,10 @@ class ItemReviewAdd(tk.Frame):
 class EstabReviewAdd(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+
+        #page title label
+        estabReviewAddLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        estabReviewAddLabel.grid(pady=10)
 
         #input field variables
         self.feedback = tk.StringVar()
@@ -636,6 +648,10 @@ class ReviewUpdate(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        #page title label
+        reviewUpdateLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        reviewUpdateLabel.grid(pady=10)
+
         #update review variables
         self.review_id = tk.IntVar()
         self.user_id = tk.IntVar()
@@ -699,6 +715,10 @@ class ReviewUpdate(tk.Frame):
 class ReviewDelete(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+
+        #page title label
+        reviewDeleteLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        reviewDeleteLabel.grid(pady=10)
 
         #only need the review id for deletion
         self.review_id = tk.IntVar()
