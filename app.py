@@ -870,7 +870,7 @@ class ViewFoodEstablishment(tk.Frame):
         viewEstabBtn.grid(pady=10)
 
         #display results here
-        resultContainer = tk.Text(self, height=15, width=80)
+        resultContainer = tk.Text(self, height=20, width=80)
         resultContainer.grid(pady=10)
 
         #return to previous page
@@ -915,7 +915,7 @@ class ViewItemReview(tk.Frame):
                 return
 
             if dbConn:
-                query = "SELECT * FROM food_review WHERE item_id = %s"
+                query = "SELECT * FROM food_review WHERE item_id = %d"
                 cur = dbConn.cursor()
                 try:
                     cur.execute(query, (itemID,))
@@ -937,7 +937,7 @@ class ViewItemReview(tk.Frame):
         viewReviewsBtn.grid(pady=10)
 
         #display results here
-        reviewsContainer = tk.Text(self, height=15, width=80)
+        reviewsContainer = tk.Text(self, height=20, width=80)
         reviewsContainer.grid(pady=10)
 
         #buttn to return to the previous page
@@ -963,7 +963,7 @@ class ViewEstabReview(tk.Frame):
                 return
 
             if dbConn:
-                query = "SELECT * FROM food_review WHERE item_id = %s"
+                query = "SELECT * FROM food_review WHERE establishment_id = %d"
                 cur = dbConn.cursor()
                 try:
                     cur.execute(query, (itemID,))
@@ -985,7 +985,7 @@ class ViewEstabReview(tk.Frame):
         viewReviewsBtn.grid(pady=10)
 
         #display results here
-        reviewsContainer = tk.Text(self, height=15, width=80)
+        reviewsContainer = tk.Text(self, height=20, width=80)
         reviewsContainer.grid(pady=10)
 
         #buttn to return to the previous page
@@ -1039,7 +1039,7 @@ class ViewItemEstablishment(tk.Frame):
         deleteButton.grid(pady=10)
 
         #display results/reports here
-        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer = tk.Text(self, height=20, width=80)
         reportsContainer.grid(pady=10)
 
         #returns to previous page
@@ -1101,7 +1101,7 @@ class ViewItemBasedType(tk.Frame):
         deleteButton.grid(pady=10)
 
         #display results/reports here
-        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer = tk.Text(self, height=20, width=80)
         reportsContainer.grid(pady=10)
 
         #return to previous page
@@ -1145,7 +1145,7 @@ class ViewEstablishmentBasedRating(tk.Frame):
         executeButton.grid(pady=10)
 
         #display results/reports here
-        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer = tk.Text(self, height=20, width=80)
         reportsContainer.grid(pady=10)
 
         #returns to previous page
@@ -1186,7 +1186,7 @@ class ViewItemsBasedPrice(tk.Frame):
         executeButton.grid(pady=10)
 
         #display results/reports here
-        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer = tk.Text(self, height=20, width=80)
         reportsContainer.grid(pady=10)
 
         #returns to previous page
@@ -1278,7 +1278,7 @@ class ViewItemsPriceRangeEstab(tk.Frame):
         executeButton.grid(row=4, column=0, columnspan=2, pady=10)
 
         #display results/reports here
-        reportsContainer = tk.Text(self, height=15, width=80)
+        reportsContainer = tk.Text(self, height=20, width=80)
         reportsContainer.grid(row=5, column=0, columnspan=2, pady=10)
 
         #returns to previous page
@@ -1324,6 +1324,8 @@ class SearchPage(tk.Frame):
         report7Button.grid(pady=10)
 
         #REPORT 8
+        report8Button = tk.Button(self, text=" View Food Items By Price & Food Type", command=lambda: controller.show_frame(ViewItemsPriceRangeEstab))
+        report8Button.grid(pady=10)
 
         #select query input (for advanced users experienced in MySQL)
         queryLabel = tk.Label(self, text='Advanced Search', font=('calibre', 10))
