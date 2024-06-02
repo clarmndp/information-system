@@ -68,7 +68,7 @@ class tkinterApp(tk.Tk):
 
 
         for F in (LoginPage, AdminPage, CasualPage, ReportsPage, FoodItemAdd, FoodItemEdit, FoodItemDelete, ItemReviewAdd, EstabReviewAdd, ReviewUpdate, ReviewDelete,
-                   AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ViewItemEstablishment, ViewItemBasedType):
+                   AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ViewItemEstablishment, ViewItemBasedType, ReviewsWithinMonth):
   
             frame = F(mainContainer, self)
   
@@ -874,8 +874,87 @@ class ViewItemBasedType(tk.Frame):
 
         returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(ReportsPage))
         returnBtn.grid(pady=10)
-        #add your features here
         
+
+class ReviewsWithinMonth(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.estabId = tk.StringVar()
+        self.foodId = tk.StringVar() 
+
+        viewItemTypeLabel = tk.Label(self, text="Reviews Within a Month", font=('calibre', 20, 'bold'))
+        viewItemTypeLabel.grid( pady=10)
+
+        def viewItems():
+            itemID = self.foodId.get()
+            
+            if dbConn:      
+                query = f'SELECT r.review_id, r.feedback, r.rating, r.date_of_review FROM food_review r LEFT JOIN food_item i ON r.item_id = i.item_id WHERE r.item_id = {itemID} AND DATEDIFF(CURDATE(), r.date_of_review) <= 30;'
+                cur = dbConn.cursor()
+                try:
+                    cur.execute(query)
+                    results = cur.fetchall()
+                    reportsContainer.delete(1.0, tk.END)
+                    for row in results:
+                        reportsContainer.insert(tk.END, f"{row}\n")
+                    dbConn.commit()
+                    messagebox.showinfo("Success", "Food item fetch successfully.")
+                except mariadb.Error as e:
+                    messagebox.showerror("Query Error", f"Error executing query: {e}")
+                finally:
+                    cur.close()
+            else:
+                messagebox.showerror("Database Error", "No database connection established.")
+
+        def viewEstab():
+            estabID = self.estabId.get()
+        
+            if dbConn:      #change to *
+                query = f'SELECT r.review_id, r.feedback, r.rating, r.date_of_review FROM food_review r LEFT JOIN food_establishment e ON r.establishment_id = e.establishment_id WHERE r.establishment_id = {estabID} AND DATEDIFF(CURDATE(), r.date_of_review) <= 30'
+                cur = dbConn.cursor()
+                try:
+                    cur.execute(query)
+                    results = cur.fetchall()
+                    reportsContainer.delete(1.0, tk.END)
+                    for row in results:
+                        reportsContainer.insert(tk.END, f"{row}\n")
+                    dbConn.commit()
+                    messagebox.showinfo("Success", "Food item fetch successfully.")
+                except mariadb.Error as e:
+                    messagebox.showerror("Query Error", f"Error executing query: {e}")
+                finally:
+                    cur.close()
+            else:
+                messagebox.showerror("Database Error", "No database connection established.")
+
+
+        #establishment
+        estabLabel = tk.Label(self, text='Establishment Id', font=('calibre', 10, 'bold'))
+        estabLabel.grid(pady=5)
+        estabEntry = tk.Entry(self, textvariable = self.estabId, font=('calibre', 10, 'normal'))
+        estabEntry.grid( pady=5)
+
+        viewReviewEstab = tk.Button(self, text=" Reviews for Food Establishment", command=viewEstab)
+        viewReviewEstab.grid(pady=10)
+
+        #food item
+        foodLabel = tk.Label(self, text='Food Item Id', font=('calibre', 10, 'bold'))
+        foodLabel.grid( pady=5)
+        foodEntry = tk.Entry(self, textvariable = self.foodId, font=('calibre', 10, 'normal'))
+        foodEntry.grid( pady=5)
+
+        viewReviewFood = tk.Button(self, text="Reviews for Food Items", command=viewItems)
+        viewReviewFood.grid(pady=10)
+
+        #display results/reports here
+        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer.grid(pady=10)
+
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(ReportsPage))
+        returnBtn.grid(pady=10)
+
+
 class ReportsPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -893,6 +972,9 @@ class ReportsPage(tk.Frame):
 
         itemBasedTypeButton = tk.Button(self, text=" View Item Based On Food Type in Establishment", command=lambda: controller.show_frame(ViewItemBasedType))
         itemBasedTypeButton.grid(pady=10)
+
+        reviewMonthEstab = tk.Button(self, text=" View Reviews Within a Month", command=lambda: controller.show_frame(ReviewsWithinMonth))
+        reviewMonthEstab.grid(pady=10)
 
         #select query input
         queryLabel = tk.Label(self, text='Input SQL SELECT statements \n for reports to generate', font=('calibre', 10))
