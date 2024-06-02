@@ -110,45 +110,44 @@ class LoginPage(tk.Frame):
         submitBtn = tk.Button(self, text='Submit', command=directClientToPage)
         submitBtn.grid(row=3, column=1, pady=10)
 
+# Admin Page/Dashboard
 class AdminPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        # show add text and add button
-        textVar = tk.StringVar()
-        textVar.set("ADD")
+        #page title label
+        adminLabel = tk.Label(self, text="Admin Dashboard", font=('calibre', 20, 'bold'))
+        adminLabel.grid(row=0, column=0, columnspan=2, pady=10)
 
-        addSomethingLabel = tk.Label(self,textvariable=textVar)
-        addSomethingLabel.pack()
+        #Add Features
+        userAddLabel = tk.Label(self, text="Add", font=('calibre', 10, 'bold'))
+        userAddLabel.grid(row=1, column=0, columnspan=2, pady=10)
 
-        itemAddButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemAdd))
-        itemAddButton.pack()
+        #add food item button
+        itemAddButton = tk.Button(self, text="Food Item", command=lambda: controller.show_frame(FoodItemAdd))
+        itemAddButton.grid(row=2, column=0, pady=5)
 
-        # show update text and update button
-        textVar2 = tk.StringVar()
-        textVar2.set("UPDATE")
+        #Update Features
+        userUpdateLabel = tk.Label(self, text="Update", font=('calibre', 10, 'bold'))
+        userUpdateLabel.grid(row=3, column=0, columnspan=2, pady=10)
 
-        updateSomethingLabel = tk.Label(self,textvariable=textVar2)
-        updateSomethingLabel.pack()
+        #update food item button
+        itemEditButton = tk.Button(self, text="Food Item", command=lambda: controller.show_frame(FoodItemEdit))
+        itemEditButton.grid(row=4, column=0, pady=5)
 
-        itemEditButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemEdit))
-        itemEditButton.pack()
+        #Delete Features
+        userDeleteLabel = tk.Label(self, text="Delete", font=('calibre', 10, 'bold'))
+        userDeleteLabel.grid(row=5, column=0, columnspan=2, pady=10)
 
-        # show delete text and delete button
-        textVar3 = tk.StringVar()
-        textVar3.set("DELETE")
-
-        deleteSomethingLabel = tk.Label(self,textvariable=textVar3)
-        deleteSomethingLabel.pack()
-
-        itemDeleteButton = tk.Button(self, text="Item", command=lambda: controller.show_frame(FoodItemDelete))
-        itemDeleteButton.pack()
+        #delete food item button
+        itemDeleteButton = tk.Button(self, text="Food Item", command=lambda: controller.show_frame(FoodItemDelete))
+        itemDeleteButton.grid(row=6, column=0, pady=5)
         
         #route to Reports page
         reportsLabel = tk.Label(self, text='Reports', font=('calibre', 10, 'bold'))
-        reportsLabel.grid(row=6, column=0, pady=5)
+        reportsLabel.grid(row=7, column=0, pady=5)
         reportsBtn = tk.Button(self, text = 'Go', command=lambda: controller.show_frame(ReportsPage))
-        reportsBtn.grid(row=6, column=1, columnspan=2, pady=5)
+        reportsBtn.grid(row=7, column=1, columnspan=2, pady=5)
 
 class FoodItemAdd(tk.Frame):
     def __init__(self, parent, controller):
