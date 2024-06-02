@@ -478,7 +478,7 @@ class ReportsPage(tk.Frame):
         
         def generateReport():
             query = queryEntry.get()
-            global dbConn
+            # global dbConn
             if dbConn:
                 cur = dbConn.cursor()
                 try:
@@ -494,7 +494,7 @@ class ReportsPage(tk.Frame):
                 except mariadb.Error as e:
                    messagebox.showerror("Query Error", f"Error executing query: {e}")
                 finally:
-                    dbConn.close()
+                    cur.close()
 
         #execute SQL statement
         generateBtn = tk.Button(self, text='Generate Reports', command=generateReport)
