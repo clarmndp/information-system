@@ -596,12 +596,6 @@ class ItemReviewAdd(tk.Frame):
         feedbackEntry = tk.Entry(self, textvariable=self.feedback, width=50)
         feedbackEntry.grid(pady=10)
 
-        #date
-        dateLabel = tk.Label(self, text="Date of Review (YYYY-MM-DD):")
-        dateLabel.grid(pady=10)
-        dateEntry = tk.Entry(self, textvariable=self.date, width=50)
-        dateEntry.grid(pady=10)
-
         #rating
         ratingLabel = tk.Label(self, text="Rating (1-5):")
         ratingLabel.grid(pady=10)
@@ -627,14 +621,13 @@ class ItemReviewAdd(tk.Frame):
 
         #var
         feedback = self.feedback.get()
-        date = self.date.get()
         rating = self.rating.get()
         user_id = 1
         item_id = self.item_id.get()
 
         if dbConn:
-            query = 'INSERT INTO food_review (feedback, date_of_review, rating, user_id, item_id) VALUES (%s, %s, %d, %d, %d)'
-            review = (feedback, date, rating, user_id, item_id)
+            query = 'INSERT INTO food_review (feedback, date_of_review, rating, user_id, item_id) VALUES (%s, CURDATE(), %d, %d, %d)'
+            review = (feedback, rating, user_id, item_id)
             cur = dbConn.cursor()
             try:
                 cur.execute(query, review)
@@ -671,12 +664,6 @@ class EstabReviewAdd(tk.Frame):
         feedbackEntry = tk.Entry(self, textvariable=self.feedback, width=50)
         feedbackEntry.grid(pady=10)
 
-        #date
-        dateLabel = tk.Label(self, text="Date of Review (YYYY-MM-DD):")
-        dateLabel.grid(pady=10)
-        dateEntry = tk.Entry(self, textvariable=self.date, width=50)
-        dateEntry.grid(pady=10)
-
         #rating
         ratingLabel = tk.Label(self, text="Rating (1-5):")
         ratingLabel.grid(pady=10)
@@ -700,7 +687,6 @@ class EstabReviewAdd(tk.Frame):
     #add food review logic
     def addReview(self):
         feedback = self.feedback.get()
-        date = self.date.get()
         rating = self.rating.get()
         user_id = 1
         estab_id = self.item_id.get()
@@ -708,8 +694,8 @@ class EstabReviewAdd(tk.Frame):
         #establish connection to database before executing query
         if dbConn:
             #SQL command
-            query = 'INSERT INTO food_review (feedback, date_of_review, rating, user_id, establishment_id) VALUES (%s, %s, %d, %d)'
-            review = (feedback, date, rating, user_id, estab_id)
+            query = 'INSERT INTO food_review (feedback, date_of_review, rating, user_id, establishment_id) VALUES (%s, CURDATE(), %d, %d)'
+            review = (feedback, rating, user_id, estab_id)
             cur = dbConn.cursor()
             try:
                 #execution of SQL command
@@ -1375,7 +1361,10 @@ class SearchPage(tk.Frame):
 
         #page title label
         reportsLabel = tk.Label(self, text='Reports Page', font=('calibre', 20, 'bold'))
-        reportsLabel.grid(pady=10)
+        reportsLabel.grid(column=0, pady=10)
+        #return to previous page
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(userType))
+        returnBtn.grid(column=1, pady=10)
 
         #REPORT 1
         report1Button = tk.Button(self, text=" View All Food Establishments", command=lambda: controller.show_frame(ViewFoodEstablishment))
@@ -1443,10 +1432,6 @@ class SearchPage(tk.Frame):
         #display results/reports here
         reportsContainer = tk.Text(self, height=15, width=50)
         reportsContainer.grid(pady=10)
-        
-        #return to previous page
-        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(userType))
-        returnBtn.grid(pady=10)
 
 #TKINTER APP
 root = tkinterApp()
