@@ -60,7 +60,8 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage, CasualPage, AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ReportsPage, FoodItemAdd,FoodItemEdit,FoodItemDelete ):
+        for F in (LoginPage, AdminPage, CasualPage, AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ReportsPage, FoodItemAdd,FoodItemEdit,FoodItemDelete, 
+        ViewItemEstablishment, ViewItemBasedType):
   
             frame = F(mainContainer, self)
   
@@ -459,6 +460,110 @@ class CasualPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+        viewItemInEstablishment = tk.Button(self, text="View Items in a Food Establishment",command=lambda: controller.show_frame(ViewItemEstablishment))
+        viewItemInEstablishment.grid(pady=10)
+
+        viewItemFoodTypeEstablishment = tk.Button(self, text="View Items with their Food Type in a Food Establishment",command=lambda: controller.show_frame(ViewItemBasedType))
+        viewItemFoodTypeEstablishment.grid(pady=10)
+
+
+        
+
+
+class ViewItemEstablishment(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+
+        self.estabId = tk.StringVar()
+        
+        viewItemEstab = tk.Label(self, text="Enter food establishment ID:")
+        viewItemEstab.grid(pady=10)
+        estabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
+        estabIdEntry.grid(pady=10)
+
+
+        def viewItems():
+            estabID = self.estabId.get()
+
+            if dbConn:
+                query = f'SELECT * FROM food_item i LEFT JOIN food_establishment e ON i.establishment_id = e.establishment_id WHERE i.establishment_id = {estabID}'
+                cur = dbConn.cursor()
+                try:
+                    cur.execute(query)
+                    results = cur.fetchall()
+                    reportsContainer.delete(1.0, tk.END)
+                    for row in results:
+                        reportsContainer.insert(tk.END, f"{row}\n")
+                    dbConn.commit()
+                    messagebox.showinfo("Success", "Food item fetch successfully.")
+                except mariadb.Error as e:
+                    messagebox.showerror("Query Error", f"Error executing query: {e}")
+                finally:
+                    cur.close()
+            else:
+                messagebox.showerror("Database Error", "No database connection established.")
+
+        deleteButton = tk.Button(self, text="View Food Items", command=viewItems)
+        deleteButton.grid(pady=10)
+
+        #display results/reports here
+        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer.grid(pady=10)
+
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(CasualPage))
+        returnBtn.grid(pady=10)
+
+class ViewItemBasedType(tk.Frame):
+    def __init__(self,parent,controller):
+        tk.Frame.__init__(self, parent)
+
+        self.estabId = tk.StringVar()
+        self.foodType = tk.StringVar() 
+        
+        viewItemEstab = tk.Label(self, text="Enter food establishment ID:")
+        viewItemEstab.grid(pady=10)
+        estabIdEntry = tk.Entry(self, textvariable=self.estabId, width=50)
+        estabIdEntry.grid(pady=10)
+
+        viewItemEstab = tk.Label(self, text="Enter the type of :")
+        viewItemEstab.grid(pady=10)
+        estabIdEntry = tk.Entry(self, textvariable=self.foodType, width=50)
+        estabIdEntry.grid(pady=10)
+
+
+        def viewItems():
+            estabID = self.estabId.get()
+            foodType = self.foodType.get()
+
+            if dbConn:
+                query = f'SELECT * FROM food_item i LEFT JOIN food_establishment e ON i.establishment_id = e.establishment_id WHERE i.establishment_id = %s AND i.food_type=%s'
+                items = (estabID, foodType)
+                cur = dbConn.cursor()
+                try:
+                    cur.execute(query,items)
+                    results = cur.fetchall()
+                    reportsContainer.delete(1.0, tk.END)
+                    for row in results:
+                        reportsContainer.insert(tk.END, f"{row}\n")
+                    dbConn.commit()
+                    messagebox.showinfo("Success", "Food item fetch successfully.")
+                except mariadb.Error as e:
+                    messagebox.showerror("Query Error", f"Error executing query: {e}")
+                finally:
+                    cur.close()
+            else:
+                messagebox.showerror("Database Error", "No database connection established.")
+
+        
+        deleteButton = tk.Button(self, text="View Food Items", command=viewItems)
+        deleteButton.grid(pady=10)
+
+        #display results/reports here
+        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer.grid(pady=10)
+
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(CasualPage))
+        returnBtn.grid(pady=10)
         #add your features here
 class ReportsPage(tk.Frame):  
     def __init__(self, parent, controller):
