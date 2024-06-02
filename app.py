@@ -6,16 +6,22 @@ import mariadb
 #MariaDB connection variable to be used for SQL commands
 dbConn = None
 
+userType = None
+
 # function to connect to the MariaDB database
 def connect_db(user_type):
     global dbConn
+    global userType
     if user_type == "Admin":
         user = "foodie"
         password = "chefP!"
+        userType = AdminPage
     elif user_type == "Casual":
         user = "pares"
         password = "diwataP"
+        userType = CasualPage
     else:
+        userType = None
         raise ValueError("Invalid user type")
 
     try:
@@ -857,6 +863,8 @@ class ViewItemBasedType(tk.Frame):
 class ReportsPage(tk.Frame):  
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        
+        global userType
 
         self.query_var = tk.StringVar()
 
@@ -897,8 +905,8 @@ class ReportsPage(tk.Frame):
         #display results/reports here
         reportsContainer = tk.Text(self, height=15, width=50)
         reportsContainer.grid(pady=10)
-
-        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(AdminPage))
+        
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(userType))
         returnBtn.grid(pady=10)
 
 
