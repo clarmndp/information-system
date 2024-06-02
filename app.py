@@ -65,7 +65,7 @@ class tkinterApp(tk.Tk):
   
         self.frames = {}  
 
-        for F in (LoginPage, AdminPage, CasualPage, SearchPage, FoodItemAdd, FoodItemEdit, FoodItemDelete, ItemReviewAdd, EstabReviewAdd, ReviewUpdate, ReviewDelete, AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ViewItemEstablishment, ViewItemBasedType, ViewFoodEstablishment, ViewEstabReview, ViewItemReview, ViewReviews, ViewEstablishmentBasedRating, ViewItemsBasedPrice, ViewItemsPriceRangeEstab):
+        for F in (LoginPage, AdminPage, CasualPage, SearchPage, FoodItemAdd, FoodItemEdit, FoodItemDelete, ItemReviewAdd, EstabReviewAdd, ReviewUpdate, ReviewDelete, AddFoodEstablishment, DeleteFoodEstablishment, EditFoodEstablishment, ViewItemEstablishment, ViewItemBasedType, ViewFoodEstablishment, ViewEstabReview, ViewItemReview, ViewReviews, ViewEstablishmentBasedRating, ViewItemsBasedPrice, ViewItemsPriceRangeEstab, ReviewsWithinMonth):
   
             frame = F(mainContainer, self)
   
@@ -1110,6 +1110,85 @@ class ViewItemBasedType(tk.Frame):
 
 #REPORT NO.5 PAGE
 
+class ReviewsWithinMonth(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        self.estabId = tk.StringVar()
+        self.foodId = tk.StringVar() 
+
+        viewItemTypeLabel = tk.Label(self, text="Reviews Within a Month", font=('calibre', 20, 'bold'))
+        viewItemTypeLabel.grid( pady=10)
+
+        def viewItems():
+            itemID = self.foodId.get()
+            
+            if dbConn:      
+                query = f'SELECT r.review_id, r.feedback, r.rating, r.date_of_review FROM food_review r LEFT JOIN food_item i ON r.item_id = i.item_id WHERE r.item_id = {itemID} AND DATEDIFF(CURDATE(), r.date_of_review) <= 30;'
+                cur = dbConn.cursor()
+                try:
+                    cur.execute(query)
+                    results = cur.fetchall()
+                    reportsContainer.delete(1.0, tk.END)
+                    for row in results:
+                        reportsContainer.insert(tk.END, f"{row}\n")
+                    dbConn.commit()
+                    messagebox.showinfo("Success", "Food item fetch successfully.")
+                except mariadb.Error as e:
+                    messagebox.showerror("Query Error", f"Error executing query: {e}")
+                finally:
+                    cur.close()
+            else:
+                messagebox.showerror("Database Error", "No database connection established.")
+
+        def viewEstab():
+            estabID = self.estabId.get()
+        
+            if dbConn:      #change to *
+                query = f'SELECT r.review_id, r.feedback, r.rating, r.date_of_review FROM food_review r LEFT JOIN food_establishment e ON r.establishment_id = e.establishment_id WHERE r.establishment_id = {estabID} AND DATEDIFF(CURDATE(), r.date_of_review) <= 30'
+                cur = dbConn.cursor()
+                try:
+                    cur.execute(query)
+                    results = cur.fetchall()
+                    reportsContainer.delete(1.0, tk.END)
+                    for row in results:
+                        reportsContainer.insert(tk.END, f"{row}\n")
+                    dbConn.commit()
+                    messagebox.showinfo("Success", "Food item fetch successfully.")
+                except mariadb.Error as e:
+                    messagebox.showerror("Query Error", f"Error executing query: {e}")
+                finally:
+                    cur.close()
+            else:
+                messagebox.showerror("Database Error", "No database connection established.")
+
+
+        #establishment
+        estabLabel = tk.Label(self, text='Establishment Id', font=('calibre', 10, 'bold'))
+        estabLabel.grid(pady=5)
+        estabEntry = tk.Entry(self, textvariable = self.estabId, font=('calibre', 10, 'normal'))
+        estabEntry.grid( pady=5)
+
+        viewReviewEstab = tk.Button(self, text=" Reviews for Food Establishment", command=viewEstab)
+        viewReviewEstab.grid(pady=10)
+
+        #food item
+        foodLabel = tk.Label(self, text='Food Item Id', font=('calibre', 10, 'bold'))
+        foodLabel.grid( pady=5)
+        foodEntry = tk.Entry(self, textvariable = self.foodId, font=('calibre', 10, 'normal'))
+        foodEntry.grid( pady=5)
+
+        viewReviewFood = tk.Button(self, text="Reviews for Food Items", command=viewItems)
+        viewReviewFood.grid(pady=10)
+
+        #display results/reports here
+        reportsContainer = tk.Text(self, height=15, width=50)
+        reportsContainer.grid(pady=10)
+
+        returnBtn = tk.Button(self, text='Return', command=lambda: controller.show_frame(SearchPage))
+        returnBtn.grid(pady=10)
+
+
 #REPORT NO. 6 PAGE
 class ViewEstablishmentBasedRating(tk.Frame):
     def __init__(self, parent, controller):
@@ -1315,6 +1394,9 @@ class SearchPage(tk.Frame):
         report4Button.grid(pady=10)
 
         #REPORT 5
+        report4Button = tk.Button(self, text=" View Review Within A Month", command=lambda: controller.show_frame(ReviewsWithinMonth))
+        report4Button.grid(pady=10)
+
         #REPORT 6
         report6Button = tk.Button(self, text=" View High-Rated Food Establishments", command=lambda: controller.show_frame(ViewEstablishmentBasedRating))
         report6Button.grid(pady=10)

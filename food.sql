@@ -95,4 +95,23 @@ INSERT INTO food_item (`name`, `price`, `food_type`, `ingredient`, `establishmen
     ('Chicken Nuggets', 65, 'snack', 'chicken', 9);
     
 INSERT INTO food_review (`feedback`, `date_of_review`, `rating`, `user_id`, `establishment_id`, `item_id`) VALUES 
-    ('amazing','2024-04-29', 5, 1, 2, 1);
+    ('amazing', '2024-04-29', 5, 1, 2, 1),
+    ('good taste', '2024-05-10', 4, 1, 3, 2),
+    ('average', '2024-05-15', 3, 1, 2, 3),
+    ('excellent', '2024-05-20', 5, 1, 1, 4),
+    ('not bad', '2024-05-25', 3, 1, 4, 5),
+    ('delicious', '2024-05-28', 5, 1, 5, 6),
+    ('too salty', '2024-05-30', 2, 1, 6, 7),
+    ('perfect', '2024-06-01', 5, 1, 7, 8),
+    ('bland', '2024-06-02', 2, 1, 8, 9),
+    ('very tasty', '2024-06-03', 4, 1, 9, 10),
+    ('just okay', '2024-04-04', 3, 1, 1, 1),
+    ('amazing service', '2024-05-05', 5, 1, 2, 2),
+    ('great food', '2024-02-06', 4, 1, 3, 3),
+    ('disappointed', '2024-01-07', 1, 1, 4, 4),
+    ('fantastic', '2024-04-08', 5, 1, 5, 5),
+    ('meh', '2024-05-09', 2, 1, 6, 6),
+    ('loved it', '2024-02-10', 5, 1, 7, 7),
+    ('not my taste', '2024-01-11', 2, 1, 8, 8),
+    ('superb', '2024-04-12', 5, 1, 9, 9),
+    ('okay', '2024-01-13', 3, 1, 1, 10);
