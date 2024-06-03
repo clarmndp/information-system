@@ -579,7 +579,7 @@ class ItemReviewAdd(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         #page title label
-        itemReviewAddLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        itemReviewAddLabel = tk.Label(self, text="Add Food Item Review", font=('calibre', 20, 'bold'))
         itemReviewAddLabel.grid(pady=10)
 
         #input field variables
@@ -626,13 +626,26 @@ class ItemReviewAdd(tk.Frame):
         item_id = self.item_id.get()
 
         if dbConn:
-            query = 'INSERT INTO food_review (feedback, date_of_review, rating, user_id, item_id) VALUES (%s, CURDATE(), %d, %d, %d)'
-            review = (feedback, rating, user_id, item_id)
             cur = dbConn.cursor()
             try:
-                cur.execute(query, review)
-                dbConn.commit()
-                messagebox.showinfo("Success", "Review added successfully.")
+                #retrieve the establishment_id for the given item_id
+                cur.execute("SELECT establishment_id FROM food_item WHERE item_id = %s", (item_id,))
+                result = cur.fetchone()
+
+                if result:
+                    establishment_id = result[0]
+                    query = '''
+                    INSERT INTO food_review 
+                    (feedback, date_of_review, rating, user_id, item_id, establishment_id) 
+                    VALUES (%s, CURDATE(), %d, %d, %d, %d)
+                    '''
+                    review = (feedback, rating, user_id, item_id, establishment_id)
+                    cur.execute(query, review)
+                    dbConn.commit()
+                    messagebox.showinfo("Success", "Review added successfully.")
+                else:
+                    messagebox.showerror("Error", "Invalid item ID: Establishment not found.")
+        
             except mariadb.Error as e:
                 messagebox.showerror("Query Error", f"Error executing query: {e}")
             finally:
@@ -646,7 +659,7 @@ class EstabReviewAdd(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         #page title label
-        estabReviewAddLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        estabReviewAddLabel = tk.Label(self, text="Add Food Establishment Review", font=('calibre', 20, 'bold'))
         estabReviewAddLabel.grid(pady=10)
 
         #input field variables
@@ -689,12 +702,12 @@ class EstabReviewAdd(tk.Frame):
         feedback = self.feedback.get()
         rating = self.rating.get()
         user_id = 1
-        estab_id = self.item_id.get()
+        estab_id = self.establishment_id.get()
 
         #establish connection to database before executing query
         if dbConn:
             #SQL command
-            query = 'INSERT INTO food_review (feedback, date_of_review, rating, user_id, establishment_id) VALUES (%s, CURDATE(), %d, %d)'
+            query = 'INSERT INTO food_review (feedback, date_of_review, rating, user_id, establishment_id) VALUES (%s, CURDATE(), %d, %d, %d)'
             review = (feedback, rating, user_id, estab_id)
             cur = dbConn.cursor()
             try:
@@ -715,7 +728,7 @@ class ReviewUpdate(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         #page title label
-        reviewUpdateLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        reviewUpdateLabel = tk.Label(self, text="Edit Food Review", font=('calibre', 20, 'bold'))
         reviewUpdateLabel.grid(pady=10)
 
         #update review variables
@@ -784,7 +797,7 @@ class ReviewDelete(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         #page title label
-        reviewDeleteLabel = tk.Label(self, text="Edit Food Item", font=('calibre', 20, 'bold'))
+        reviewDeleteLabel = tk.Label(self, text="Delete Food Review", font=('calibre', 20, 'bold'))
         reviewDeleteLabel.grid(pady=10)
 
         #only need the review id for deletion
@@ -828,7 +841,7 @@ class ViewFoodEstablishment(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         # page title label
-        estabLabel = tk.Label(self, text="View Reports", font=('calibre', 20, 'bold'))
+        estabLabel = tk.Label(self, text="View Food Establishments", font=('calibre', 20, 'bold'))
         estabLabel.grid(pady=10)
 
         #function to fetch establishment details
@@ -943,8 +956,8 @@ class ViewEstabReview(tk.Frame):
         reviewEntryIdEntry.grid(pady=5)
         
         def viewReviews():
-            itemID = self.reviewEstabID.get()
-            if not itemID:
+            estabID = self.reviewEstabID.get()
+            if not estabID:
                 messagebox.showerror("Input Error", "Please enter a Food Establishment ID.")
                 return
 
@@ -952,7 +965,7 @@ class ViewEstabReview(tk.Frame):
                 query = "SELECT * FROM food_review WHERE establishment_id = %d"
                 cur = dbConn.cursor()
                 try:
-                    cur.execute(query, (itemID,))
+                    cur.execute(query, (estabID,))
                     results = cur.fetchall()
                     reviewsContainer.delete(1.0, tk.END)
                     for row in results:
